@@ -22,6 +22,12 @@ alen([], 0).
 
 alen([_|T], R) :-
     lenacc(T, R, 1).
+    
+nth([H|_], 0, H).
+
+nth([_|T], N, R) :-
+    TN is N - 1,
+    nth(T, TN, R).
 
 % append
 
