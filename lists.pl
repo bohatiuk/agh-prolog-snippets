@@ -264,6 +264,9 @@ maxmin(R, [Max|MinMax]) :-
 	minmax(L, MinMax).
 
 % difference lists
+% L1 + L2 = L3
+% L2 = L3 - L1 is difference list (L2 = L3-E)
+% -(A, B) is just a compaund term used for pairing list with End
 
 is_empty_diff(L-T) :- L == T.
 
@@ -272,13 +275,19 @@ length_diff([H|T]-E, R) :-
     length_diff(T-E, TR), 
     R is TR + 1.
 
-add_diff(L1-E1,E1-E2,L1-E2).
+conc_diff(L1-E1,E1-E2,L1-E2).
 
 member_diff(X, [X|T]-E) :- \+ is_empty_diff([X|T]-E).
 member_diff(X, [H|T]-E) :-
     X \= H,
 	\+ is_empty_diff([H|T]-E),
     member_diff(X, T-E).
+
+list_diff_to_list(L-E, L).
+
+
+list_to_list_diff(L, LD-E) :-
+    conc(L, E, LD).
 
 % dictionary 
 

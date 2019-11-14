@@ -38,10 +38,8 @@ sub(X, s(Y), R) :- sub(X, Y, s(R)).
 mul(_, zero, zero).
 mul(X, s(Y), R) :- mul(X, Y, RM), add(RM, X, R).
 
-%%%%%%%%%%%%%%%%%%%%
 
 len(zero, 0).
-
 len(s(X), R) :-
     len(X, TR),
     R is TR + 1.
@@ -51,7 +49,6 @@ greater_than(X, Y) :- len(X, LX), len(Y, LY), LX > LY.
 divacc(X, _, R, A, C) :-
     greater_than(A, X),
     s(R) = C.
-
 divacc(X, Y, R, A, C) :- 
     add(A, Y, RA),
 	divacc(X, Y, R, RA, s(C)).
