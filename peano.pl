@@ -13,6 +13,11 @@ encode(s(X), N) :-
     encode(X, TN),
     N is TN + 1.
 
+len(zero, 0).
+len(s(X), R) :-
+    len(X, TR),
+    R is TR + 1.
+
 % in peano arithmetic
 % x + zero = x
 % x + s(y) = s(x+y)
@@ -38,24 +43,24 @@ sub(X, s(Y), R) :- sub(X, Y, s(R)).
 mul(_, zero, zero).
 mul(X, s(Y), R) :- mul(X, Y, RM), add(RM, X, R).
 
+div(X, Y, _) :- 
+    less_than(X, Y), !. 
+div(X, Y, s(R)) :-
+    sub(X, Y, D), div(D, Y, R).
+   
 
-len(zero, 0).
-len(s(X), R) :-
-    len(X, TR),
-    R is TR + 1.
+mod(X, Y, R) :- 
+    less_than(X, Y), R = X, !.
+mod(X, Y, R) :-
+    sub(X, Y, D), mod(D, Y, R).
 
 greater_than(X, Y) :- len(X, LX), len(Y, LY), LX > LY.
 
-divacc(X, _, R, A, C) :-
-    greater_than(A, X),
-    s(R) = C.
-divacc(X, Y, R, A, C) :- 
-    add(A, Y, RA),
-	divacc(X, Y, R, RA, s(C)).
-    
-% assume X > Y
-div(X, Y, R) :-
-    divacc(X, Y, R, zero, 0).
+less_than(X, Y) :- len(X, LX), len(Y, LY), LX < LY.
+
+eq(X, Y) :- len(X, L), len(Y, L).
+
+
     
     
     

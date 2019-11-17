@@ -78,9 +78,7 @@ add(X, L, [X|L]). % front insert to list L
 add(X, [H|T], [H|RT]) :-
     add(X, T, RT).
 
-% ! (cut atom) tells prolog, that its leftwords goals are 
-% the only success branches in the search tree
-% so after first successful unification of R, search tree will be punned
+% ! (cut atom) prevents backtracking after first successfull goal unification
 %
 % prolog won’t try alternatives for:
 % literals left to the cut
@@ -121,6 +119,9 @@ pref(X, L) :-
 suff(X, L) :-
     append(_, X, L).
 
+% does X occur befor Y in list L ?
+before(X, Y, L) :- append(Z, [Y|_], L), append(_, [X|_], Z).
+
 ordered([_]). % every 1 element list is ordered
 ordered([H1, H2|T]) :-
     H1 =< H2,
@@ -133,18 +134,34 @@ contains(L, R) :-
   	suff(Sx, L),
   	pref(R, Sx),
   	R \= [].
-
 % or:
 % contains(L, R) :-
 %     conc([_, R, _], L).
 
 % thrue if first list contains elements of second list with respect to order of 
 % of this elements in second list
+
+% induction:
+% what is a a sublist of list S ?
+% 1. base case: empty list is a sublist of empty list
+% 2. assume that L is a sublist of length n of list S,
+%    then, for sublist of length n + 1: M = [H|T]:
+%    M is either [H|L] or [L].
+
+% a sublist of list L is either a head of L concatanated 
+% with sublist of tail or sublist of tail (without head of L)
 sublist([], []).
-sublist([H|T1], [H|T2]):-
+sublist([H|T1], [H|T2]) :- 
     sublist(T1, T2).
-sublist([_|T], L):-
+sublist([_|T], L) :- 
     sublist(T, L).
+    
+% only generate sublists of length n or n - 1.
+sublist2([], []).
+sublist2([H|T1], [H|T2]) :- 
+    sublist2(T1, T2).
+sublist2([_|T], L) :- 
+    sublist(T, L), !.
 
 % divide list into 2 lists of (almost) equals sizes
 bisect([], [], []).
@@ -206,6 +223,7 @@ permute([H|T], R) :-
     add(H, TR, R).
     
 % get flat list from nested list
+% list R is a flattened version of list L if:
 % [[1, 2], [5, [6]]] -> [1, 2, 5, 6]
 flatten([],[]).
 flatten(X, [X]) :- \+ is_list(X).
